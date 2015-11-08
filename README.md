@@ -26,3 +26,5 @@ Enter-PsSession -computername 192.168.1.50 -Credential administrator
 Import-Module c:\PSWinIoT.psd1 -verbose
 Invoke-WinIoTWebRequest -uri 'http://date.jsontest.com'
 ```
+
+![ScreenShot](https://raw.githubusercontent.com/stefanstranger/pswiniot/master/pswiniot.gif)
