@@ -11,3 +11,18 @@ Windows 10 IoT will power a range of intelligent, connected IoT devices. From sm
 I've WinIoT running on my RaspberryPi 2 and at this moment there are no invoke-restmethod or invoke-webrequest cmdlets available on WinIoT.
 The only way I found to send HTTP requests and receive HTTP responses is using the HttpClient .Net Class (https://msdn.microsoft.com/en-us/library/system.net.http.httpclient(v=vs.118).aspx)
 The first function in this PowerShell module should emulate the invoke-webrequest cmdlet from the Microsoft.PowerShell.Utility module.
+
+# How to install and use module on RaspberryPi 2 WinIoT Device?
+1. Open PowerShell on development machine.
+2. Setup PowerShell remoting session with RaspberryPi 2 device
+```PowerShell
+$session = new-pssession -ComputerName 192.168.1.50 -Credential administrator
+Copy-Item -ToSession $session -Path .\PSWinIoT.psm1 -Destination c:\
+Copy-Item -ToSession $session -Path .\PSWinIoT.psd1 -Destination c:\
+```
+3. Start interactive PowerShell Remoting session with RaspberryPi 2 device.
+```PowerShell
+Enter-PsSession -computername 192.168.1.50 -Credential administrator
+Import-Module c:\PSWinIoT.psd1 -verbose
+Invoke-WinIoTWebRequest -uri 'http://date.jsontest.com'
+```
