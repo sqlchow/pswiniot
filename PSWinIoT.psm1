@@ -168,7 +168,17 @@ function Invoke-WinIoTWebRequest
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [String]
-        $UserAgent
+        $UserAgent,
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$false,
+                   ValueFromPipelineByPropertyName=$false, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=12, 
+                   ParameterSetName='Default')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
+        [switch]
+        $PassThru
     )
 
     Begin
@@ -176,8 +186,8 @@ function Invoke-WinIoTWebRequest
         $PSBoundParameters.GetEnumerator() | % { 
             Write-Verbose "Parameter: $_" 
         }
-
-        [void][System.Reflection.Assembly]::LoadWithPartialName('System.Net.Http')
+        # uncomment when developing on non IoT devices
+        #[void][System.Reflection.Assembly]::LoadWithPartialName('System.Net.Http')
 
         $clientHandler = New-Object System.Net.Http.HttpClientHandler
         $request       = New-Object System.Net.Http.HttpRequestMessage
@@ -316,15 +326,18 @@ function Invoke-WinIoTWebRequest
             #$httpclient.GetStringAsync($Uri).Result
             $response = $httpclient.SendAsync($request, $completionOption)
             
-            while(-not $response.IsCompleted){
-                Write-Verbose "Awaiting reponse: $($response.AsyncState)"
-                
+            if(-not $response.IsCompleted){
+                Write-Verbose "Awaiting reponse..."
                 $response.Wait()
-                Write-Verbose "Sleeping for 200ms"
-                Start-Sleep -Milliseconds 200
             }
 
-            $response.Result.Content.ReadAsStringAsync().Result
+            if($PassThru){
+                Write-Verbose "Sending full response object. You will need to parse it."
+                $response
+            }else{
+                Write-Verbose "Sending response result back."
+                $response.Result.Content.ReadAsStringAsync().Result
+            }
     }
     End
     {
