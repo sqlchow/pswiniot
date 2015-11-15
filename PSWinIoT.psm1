@@ -326,17 +326,16 @@ function Invoke-WinIoTWebRequest
             #$httpclient.GetStringAsync($Uri).Result
             $response = $httpclient.SendAsync($request, $completionOption)
             
-            while(-not $response.IsCompleted){
-                Write-Verbose "Awaiting reponse: $($response.AsyncState)"
-                
+            if(-not $response.IsCompleted){
+                Write-Verbose "Awaiting reponse..."
                 $response.Wait()
-                Write-Verbose "Sleeping for 200ms"
-                Start-Sleep -Milliseconds 200
             }
 
-            if($PSBoundParameters.ContainsKey('PassThru')){
+            if($PassThru){
+                Write-Verbose "Sending full response object. You will need to parse it."
                 $response
             }else{
+                Write-Verbose "Sending response result back."
                 $response.Result.Content.ReadAsStringAsync().Result
             }
     }
