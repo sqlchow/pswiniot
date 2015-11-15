@@ -200,7 +200,7 @@ function Invoke-WinIoTWebRequest
 
         if($PSBoundParameters.ContainsKey('Body')){
             $request.Content = `
-                New-Object System.Net.Http.StringContent($Body, [Encoding]::UTF8, $ContentType)
+                New-Object System.Net.Http.StringContent($Body, [System.Text.Encoding]::UTF8, $ContentType)
         }
 
         if($PSBoundParameters.ContainsKey('Certificate')){
@@ -241,7 +241,7 @@ function Invoke-WinIoTWebRequest
         if($PSBoundParameters.ContainsKey('Credential')){
             $useAltCredentails  = $true
             $networkCredentails = $Credential.GetNetworkCredential()
-            $encodedByteArray   = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes( `
+            $encodedByteArray   = [Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes( `
                                 "$($networkCredentails.UserName):$($networkCredentails.Password)"))
 
             $clientHandler.PreAuthenticate = $true
