@@ -168,7 +168,17 @@ function Invoke-WinIoTWebRequest
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [String]
-        $UserAgent
+        $UserAgent,
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$false,
+                   ValueFromPipelineByPropertyName=$false, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=12, 
+                   ParameterSetName='Default')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
+        [switch]
+        $PassThru
     )
 
     Begin
@@ -176,8 +186,8 @@ function Invoke-WinIoTWebRequest
         $PSBoundParameters.GetEnumerator() | % { 
             Write-Verbose "Parameter: $_" 
         }
-
-        [void][System.Reflection.Assembly]::LoadWithPartialName('System.Net.Http')
+        # uncomment when developing on non IoT devices
+        #[void][System.Reflection.Assembly]::LoadWithPartialName('System.Net.Http')
 
         $clientHandler = New-Object System.Net.Http.HttpClientHandler
         $request       = New-Object System.Net.Http.HttpRequestMessage
@@ -324,7 +334,11 @@ function Invoke-WinIoTWebRequest
                 Start-Sleep -Milliseconds 200
             }
 
-            $response.Result.Content.ReadAsStringAsync().Result
+            if($PSBoundParameters.ContainsKey('PassThru')){
+                $response
+            }else{
+                $response.Result.Content.ReadAsStringAsync().Result
+            }
     }
     End
     {
