@@ -200,7 +200,7 @@ function Invoke-WinIoTWebRequest
 
         if($PSBoundParameters.ContainsKey('Body')){
             $request.Content = `
-                New-Object System.Net.Http.StringContent($Body, [Encoding]::UTF8, $ContentType)
+                New-Object System.Net.Http.StringContent($Body, [System.Text.Encoding]::UTF8, $ContentType)
         }
 
         if($PSBoundParameters.ContainsKey('Certificate')){
